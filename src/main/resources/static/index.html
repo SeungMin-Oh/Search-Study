@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Lucene Search System</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .form-group { margin-bottom: 10px; }
+        label { margin-bottom: 5px; display: block; }
+        input, button { padding: 10px; }
+        #results { margin-top: 20px; }
+    </style>
+</head>
+<body>
+    <h1>Lucene Document Indexer</h1>
+    <div>
+        <div class="form-group">
+            <label for="title">Title:</label>
+            <input type="text" id="title" placeholder="Enter title" />
+        </div>
+        <div class="form-group">
+            <label for="content">Content:</label>
+            <input type="text" id="content" placeholder="Enter content" />
+        </div>
+        <button onclick="indexDocument()">Index Document</button>
+    </div>
+
+    <h1>Lucene Document Searcher</h1>
+    <div>
+        <div class="form-group">
+            <label for="query">Search Query:</label>
+            <input type="text" id="query" placeholder="Enter search query" />
+        </div>
+        <button onclick="searchDocuments()">Search</button>
+    </div>
+
+    <div id="results"></div>
+
+    <script>
+        function indexDocument() {
+            var title = $('#title').val();
+            var content = $('#content').val();
+            $.post('/search/index', { title: title, content: content })
+                .done(function(data) {
+                    alert(data);
+                    $('#title').val('');
+                    $('#content').val('');
+                })
+                .fail(function(xhr, status, error) {
+                    alert("Error: " + xhr.responseText);
+                });
+        }
+
+        function searchDocuments() {
+            var query = $('#query').val();
+            $.get('/search', { query: query })
+                .done(function(data) {
+                    console.log(data)
+                    var results = $('#results');
+                    results.empty();
+                    if (data.length > 0) {
+                        data.forEach(function(doc) {
+                            results.append('<div><h4>' + doc.title + '</h4><p>' + doc.content + '</p></div>');
+                        });
+                    } else {
+                        results.append('<p>No documents found.</p>');
+                    }
+                })
+                .fail(function(xhr, status, error) {
+                    alert("Error: " + xhr.responseText);
+                });
+        }
+    </script>
+</body>
+</html>
