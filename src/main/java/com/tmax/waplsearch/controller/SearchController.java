@@ -8,6 +8,9 @@ import org.springframework.web.server.ResponseStatusException;
 import com.tmax.waplsearch.service.LuceneIndexer;
 import com.tmax.waplsearch.service.LuceneSearcher;
 
+
+import com.tmax.waplsearch.util.BM25PlusSimilarity;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;

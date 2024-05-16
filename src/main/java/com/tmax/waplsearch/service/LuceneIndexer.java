@@ -9,6 +9,8 @@ import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
 import org.springframework.stereotype.Service;
 
+import com.tmax.waplsearch.util.BM25PlusSimilarity;
+
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.PreDestroy;
 
@@ -30,6 +32,7 @@ private static final Logger logger = LoggerFactory.getLogger(LuceneSearcher.clas
         Directory directory = FSDirectory.open(Paths.get("./index/"));
         Analyzer analyzer = new StandardAnalyzer();
         IndexWriterConfig config = new IndexWriterConfig(analyzer);
+        config.setSimilarity(new BM25PlusSimilarity(1.2f, 0.75f, 1.0f)); // BM25Plus 설정
         this.indexWriter = new IndexWriter(directory, config);
     }
 
@@ -45,6 +48,7 @@ private static final Logger logger = LoggerFactory.getLogger(LuceneSearcher.clas
         doc.add(new TextField("content", content, Field.Store.YES));
         indexWriter.addDocument(doc);
         indexWriter.commit(); 
+        indexWriter.flush();
     }
 
     public void commitIndex() throws IOException {

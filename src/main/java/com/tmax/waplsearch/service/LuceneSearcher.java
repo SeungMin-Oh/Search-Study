@@ -9,6 +9,9 @@ import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.store.Directory;
 import org.springframework.stereotype.Service;
+
+import com.tmax.waplsearch.util.BM25PlusSimilarity;
+
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.search.ScoreDoc;
@@ -28,6 +31,7 @@ public class LuceneSearcher {
     public LuceneSearcher(Directory directory) throws IOException {
         this.indexReader = DirectoryReader.open(directory);
         this.indexSearcher = new IndexSearcher(indexReader);
+        this.indexSearcher.setSimilarity(new BM25PlusSimilarity(1.2f, 0.75f, 1.0f)); // BM25Plus 설정
     }
 
     public List<Document> search(String queryStr) throws Exception {
