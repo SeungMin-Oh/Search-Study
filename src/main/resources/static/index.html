@@ -36,10 +36,20 @@
         <div class="card mb-4">
             <div class="card-body">
                 <div class="form-group">
-                    <label for="query">Search Query:</label>
-                    <input type="text" id="query" class="form-control" placeholder="Enter search query" />
+                    <label for="query-bm25">Search Query (BM25):</label>
+                    <input type="text" id="query-bm25" class="form-control" placeholder="Enter search query for BM25" />
                 </div>
-                <button class="btn btn-success" onclick="searchDocuments()">Search</button>
+                <button class="btn btn-success" onclick="searchDocumentsBM25()">Search BM25</button>
+            </div>
+        </div>
+
+        <div class="card mb-4">
+            <div class="card-body">
+                <div class="form-group">
+                    <label for="query-vector">Search Query (Vector):</label>
+                    <input type="text" id="query-vector" class="form-control" placeholder="Enter search query for Vector" />
+                </div>
+                <button class="btn btn-warning" onclick="searchDocumentsVector()">Search Vector</button>
             </div>
         </div>
 
@@ -61,24 +71,38 @@
                 });
         }
 
-        function searchDocuments() {
-            var query = $('#query').val();
-            $.get('/search', { query: query })
+        function searchDocumentsBM25() {
+            var query = $('#query-bm25').val();
+            $.get('/search/bm25', { query: query })
                 .done(function(data) {
-                    console.log(data);
-                    var results = $('#results');
-                    results.empty();
-                    if (data.length > 0) {
-                        data.forEach(function(doc) {
-                            results.append('<div class="result-item"><h4>' + doc.title + '</h4><p>' + doc.content + '</p></div>');
-                        });
-                    } else {
-                        results.append('<p>No documents found.</p>');
-                    }
+                    displayResults(data);
                 })
                 .fail(function(xhr, status, error) {
                     alert("Error: " + xhr.responseText);
                 });
+        }
+
+        function searchDocumentsVector() {
+            var query = $('#query-vector').val();
+            $.get('/search/vector', { query: query })
+                .done(function(data) {
+                    displayResults(data);
+                })
+                .fail(function(xhr, status, error) {
+                    alert("Error: " + xhr.responseText);
+                });
+        }
+
+        function displayResults(data) {
+            var results = $('#results');
+            results.empty();
+            if (data.length > 0) {
+                data.forEach(function(doc) {
+                    results.append('<div class="result-item"><h4>' + doc.title + '</h4><p>' + doc.content + '</p></div>');
+                });
+            } else {
+                results.append('<p>No documents found.</p>');
+            }
         }
     </script>
 </body>
